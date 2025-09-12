@@ -1,10 +1,7 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
+# app.py
+import streamlit as st
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
-import uvicorn
-
-app = FastAPI()
 
 # Load model
 model_path = "class_model"
@@ -13,13 +10,16 @@ model = AutoModelForSequenceClassification.from_pretrained(model_path)
 model.eval()
 id2label = model.config.id2label
 
-class InputText(BaseModel):
-    text: str
+st.title("Text Classification")
 
-@app.post("/predict")
-def predict(input: InputText):
-    inputs = tokenizer(input.text, return_tensors="pt", padding=True, truncation=True)
-    with torch.no_grad():
-        logits = model(**inputs).logits
-        predicted_class_id = logits.argmax(dim=1).item()
-        return {"prediction": id2label[predicted_class_id]}
+text = st.text_area("Enter text to classify:")
+
+if st.button("Predict"):
+    if text:
+        inputs = tokenizer(text, return_tensors="pt", padding=True, truncation=True)
+        with torch.no_grad():
+            logits = model(**inputs).logits
+            predicted_class_id = logits.argmax(dim=1).item()
+            st.write("Prediction:", id2label[predicted_class_id])
+    else:
+        st.warning("Please enter some text!")
