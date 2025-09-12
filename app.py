@@ -1,5 +1,6 @@
 # app.py
-from fastapi import FastAPI
+import os
+from fastapi import FastAPI, Header, HTTPException
 from pydantic import BaseModel
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 import torch
@@ -11,6 +12,9 @@ model = AutoModelForSequenceClassification.from_pretrained(model_path)
 model.eval()
 id2label = model.config.id2label
 
+# Load API key from environment variable (set this on Render dashboard)
+API_KEY = os.getenv("Render_API", "changeme")
+
 # Create FastAPI app
 app = FastAPI(title="Text Classification API")
 
@@ -19,7 +23,11 @@ class TextRequest(BaseModel):
     text: str
 
 @app.post("/predict")
-def predict(request: TextRequest):
+def predict(request: TextRequest, x_api_key: str = Header(...)):
+    # Check API key
+    if x_api_key != API_KEY:
+        raise HTTPException(status_code=401, detail="Unauthorized")
+
     text = request.text
     if not text:
         return {"error": "No text provided."}
