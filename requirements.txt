@@ -1,3 +1,4 @@
-streamlit
+fastapi==0.112.2
+uvicorn[standard]==0.23.2
 torch==2.8.0
 transformers==4.56.1
