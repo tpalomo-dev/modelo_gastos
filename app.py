@@ -6,13 +6,9 @@ import onnxruntime as ort
 import json
 from tokenizers import Tokenizer
 
-# Build paths relative to this script
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_DIR = os.path.join(BASE_DIR, "onnx_model/model.onnx")
-TOKENIZER_DIR = os.path.join(BASE_DIR, "onnx_model/tokenizer.json")
-ID2LABEL_DIR = os.path.join(BASE_DIR, "onnx_model/labels.json")
-
-print(TOKENIZER_DIR)
+MODEL_DIR = "onnx_model/model.onnx"
+TOKENIZER_DIR = "onnx_model/tokenizer.json"
+ID2LABEL_DIR = "onnx_model/labels.json"
 
 tokenizer = Tokenizer.from_file(TOKENIZER_DIR)
 # Load ONNX model
